@@ -1,0 +1,13 @@
+---
+## タイムゾーンの設定
+- name: Setup timezone
+  community.general.timezone:
+    name: "{{ locale_timezone }}"
+
+## システムロケールの設定
+- name: Setup locale
+  ansible.builtin.command: "localectl set-locale LANG={{ locale_locale }}"
+
+## キーボードマップの設定
+- name: Setup keymaps
+  ansible.builtin.command: "localectl set-keymap {{ locale_keymap }}"

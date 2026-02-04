@@ -1,0 +1,31 @@
+---
+## ディストリビューションごとのロール変数読み込み
+- name: Load OS specific variables
+  ansible.builtin.include_vars:
+    file: "{{ ansible_os_family }}.yml"
+
+## RHEL系のパッケージアップデート
+- name: RedHat specific updates
+  when: ansible_os_family == 'RedHat'
+  block:
+    - name: Update all dnf packages
+      ansible.builtin.dnf:
+        name: "*"
+        state: latest
+        update_cache: true
+
+## Debian系のパッケージのアップデート
+- name: Debian specific updates
+  when: ansible_os_family == 'Debian'
+  block:
+    - name: Update apt cache and packages
+      ansible.builtin.apt:
+        update_cache: true
+        upgrade: dist  # パッケージ全体を更新する場合はupgradeを追加するのが一般的
+
+## 必要なモジュールのインストール
+- name: Install the required packages
+  ansible.builtin.package:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ required_packages }}"
